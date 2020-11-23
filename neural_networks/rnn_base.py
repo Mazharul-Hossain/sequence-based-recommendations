@@ -10,6 +10,7 @@ from time import time
 
 import lasagne
 import numpy as np
+import pandas
 import theano
 
 from helpers import evaluation
@@ -107,6 +108,11 @@ class RNNBase(object):
                         'ndcg': {'direction': 1},
                         'blockbuster_share': {'direction': -1}
                         }
+
+    def load_movies_features(self, dirname):
+        if self.use_movies_features and self.movies_features is None:
+            new_temp_data = pandas.read_csv(os.path.join(dirname, "data/movies_features.txt"))
+            self.movies_features = np.array(new_temp_data)
 
     def prepare_model(self, dataset):
         """

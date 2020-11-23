@@ -2,11 +2,13 @@ from __future__ import print_function
 
 import argparse
 import os
+import re
 import sys
 from shutil import copyfile
 
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import MultiLabelBinarizer
 
 
 def command_parser():
@@ -36,6 +38,7 @@ def command_parser():
                              'fraction of total number of users. Default: 0.1',
                         default=0.1, type=float)
     parser.add_argument('--seed', help='Seed for the random train/val/test split', default=1, type=int)
+    parser.add_argument('--mf', help='Use movie features input file.', default="", type=str)
 
     args = parser.parse_args()
     args.dirname = os.path.dirname(os.path.abspath(args.filename)) + "/"
@@ -334,8 +337,46 @@ def make_readme(dirname, val_set, test_set):
         f.write(results_readme)
 
 
+def process_movies_features(filename, dirname):
+    movies = pd.read_csv(filename)
+
+    # Movie Release Year
+    def title_to_release_year(s):
+        m = re.findall(r"\(([0-9]+)\)", s)
+
+        # https://www.guru99.com/python-regular-expressions-complete-tutorial.html
+        if m is None or len(m) <= 0:
+            return None
+        return m[-1]
+
+    movies['year'] = movies['title'].apply(title_to_release_year)
+    movies['year'].fillna("1900", inplace=True)
+
+    # Create Genres
+    movies['genres_list'] = movies.apply(lambda row: row.genres.split('|'), axis=1)
+
+    # https://stackoverflow.com/a/58114603
+    genres_encoder = MultiLabelBinarizer()
+    transformed = genres_encoder.fit_transform(movies['genres_list'])
+    print(len(genres_encoder.classes_), genres_encoder.classes_)
+
+    ohe_df = pd.DataFrame(transformed)
+    data = pd.concat([movies, ohe_df], axis=1)
+
+    # Get item to item mapping
+    item_id_mapping = pd.read_csv(os.path.join(dirname, "data/item_id_mapping.txt"), sep='\t', index_col=False)
+    item_id_mapping = item_id_mapping.sort_values(by=['new_id'])
+    item_id_mapping = item_id_mapping.rename(columns={'original_id': 'movieId'})
+
+    movies_data = item_id_mapping.merge(data, on='movieId', how='inner')
+    columns = ['movieId', 'year'] + list(data.columns[-20:])
+    temp_data = movies_data.loc[:][columns]
+    temp_data.to_csv(os.path.join(dirname, "data/movies_features.txt"), index=False)
+
+
 def main():
-    sys.argv.extend(['-f', 'datasets/ratings.csv', '--columns', 'uirt', '--sep', ','])
+    sys.argv.extend(['-f', 'datasets/ratings.csv', '--columns', 'uirt', '--sep', ',',
+                     '--mf', 'datasets/movies.csv'])
     args = command_parser()
     print(args)
 
@@ -354,6 +395,9 @@ def main():
 
     train_set, val_set, test_set = split_data(data, args.val_size, args.test_size, args.dirname)
     make_sequence_format(train_set, val_set, test_set, args.dirname)
+
+    if args.mf is not None and args.mf != "":
+        process_movies_features(args.mf, args.dirname)
 
     save_data_stats(data, train_set, val_set, test_set, args.dirname)
     make_readme(args.dirname, val_set, test_set)

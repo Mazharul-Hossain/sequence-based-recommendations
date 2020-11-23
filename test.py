@@ -139,9 +139,9 @@ def test_command_parser(parser):
 def main():
     sys.argv.extend(['-d', 'datasets/', '--dir', 'RNNOneHot_',
                      '--metrics', 'recall,sps,ndcg,item_coverage,user_coverage,blockbuster_share',
-                     '-k', '3', '--save', '--rf', '--mf',
-                     '-m', 'RNN', '--r_t', 'LSTM', '--r_emb', '100', '--r_l', '100-50-50', '--r_emb', '100',
-                     '--rf'])  # , '--mf'
+                     '-k', '3', '--save',
+                     '-m', 'RNN', '--loss', 'CCE', '--r_t', 'LSTM', '--r_l', '100-50-50',  # '--r_emb', '100',
+                     '--rf', '--mf'])
 
     args = parse.command_parser(parse.predictor_command_parser, test_command_parser)
 
@@ -152,6 +152,10 @@ def main():
 
     dataset = DataHandler(dirname=args.dataset)
     predictor = parse.get_predictor(args)
+
+    if args.mf:
+        predictor.load_movies_features(dirname=dataset.dirname)
+
     predictor.prepare_model(dataset)
     file = find_models(predictor, dataset, args)
 

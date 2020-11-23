@@ -44,9 +44,9 @@ conda activate theano
 
 conda install libpython
 conda install m2w64-toolchain
-pip install numpy==1.19.3
+pip install numpy==1.19.3 scikit-learn pandas
 
-pip install Theano pandas gensim https://github.com/Lasagne/Lasagne/archive/master.zip
+pip install Theano gensim https://github.com/Lasagne/Lasagne/archive/master.zip
 
 conda install pygpu
 pip install pymc3

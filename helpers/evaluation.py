@@ -122,7 +122,7 @@ class Evaluator(object):
     def average_recall(self):
         """Return the average recall.
         """
-        recall = 0
+        recall, counter = 0, 0
         for goal, prediction in self.instances:
             if len(goal) > 0:
                 set_goal = set(goal)
@@ -130,14 +130,19 @@ class Evaluator(object):
                 temp_recall = set_goal & set_pred
 
                 # if len(temp_recall) > 0:
-                #     print("\n# *** Goal:", len(set_goal), set_goal)
-                #     print("# *** Pred:", len(set_pred), set_pred)
-                #     print("# *** Recall:", float(len(temp_recall)), temp_recall)
+                #     #     print("\n# *** Goal:", len(set_goal), set_goal)
+                #     #     print("# *** Pred:", len(set_pred), set_pred)
+                #     print("#{} *** Recall: {}".format(counter, float(len(temp_recall)), temp_recall))
+                #     counter += 1
 
-                recall += float(len(temp_recall)) / len(goal)
+                # # original recall calculation
+                # recall += float(len(temp_recall)) / len(goal)
 
-        print("# *** Recall:", recall, len(self.instances))
-        return round(recall / len(self.instances), 3)
+                # modified recall to compute hit rate
+                recall += float(len(temp_recall)) / min(len(prediction), self.k)
+
+        # print("# *** Recall:", recall, len(self.instances))
+        return round(recall / len(self.instances), 5)
 
     def average_ndcg(self):
         ndcg = 0.

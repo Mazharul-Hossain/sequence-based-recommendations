@@ -40,12 +40,13 @@ def num(s):
 def main():
     sys.argv.extend(['--tshuffle', '--extended_set', '--load_last_model',
                      '-d', 'datasets/', '--dir', 'RNNOneHot_',
+                     '--save', 'Best',
+                     '--progress', '5.0', '--mpi', '1000.0',
                      '--metrics', 'recall,sps,ndcg,item_coverage,user_coverage,blockbuster_share',
-                     '--max_iter', '6000.0', '--max_time', '28800.0', '--min_iter', '100',
-                     '--mpi', '100',
-                     '--es_m', 'StopAfterN', '--es_n', '10',
-                     '-m', 'RNN', '--loss', 'CCE', '--r_t', 'LSTM', '--r_l', '100-50-50', '--r_emb', '100',
-                     '--rf'])  # , '--mf'
+                     '--max_iter', '6000.0', '--max_time', '28800.0', '--min_iter', '100.0',
+                     '--es_m', 'StopAfterN', '--es_n', '5',
+                     '-m', 'RNN', '--loss', 'CCE', '--r_t', 'LSTM', '--r_l', '100-50-50',  # '--r_emb', '100',
+                     '--rf', '--mf'])
 
     args = parse.command_parser(parse.predictor_command_parser, training_command_parser,
                                 early_stopping.early_stopping_command_parser)
@@ -53,6 +54,9 @@ def main():
     predictor = parse.get_predictor(args)
 
     dataset = DataHandler(dirname=args.dataset, extended_training_set=args.extended_set, shuffle_training=args.tshuffle)
+
+    if args.mf:
+        predictor.load_movies_features(dirname=dataset.dirname)
 
     predictor.prepare_model(dataset)
     predictor.train(dataset,
