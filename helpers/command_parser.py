@@ -104,7 +104,7 @@ def predictor_command_parser(parser):
 
 
 def get_predictor(args):
-    args.layers = map(int, args.layers.split('-'))
+    # args.layers = map(int, args.layers.split('-'))
 
     updater = get_update_manager(args)
     recurrent_layer = get_recurrent_layers(args)
@@ -123,7 +123,6 @@ def get_predictor(args):
                               recurrent_layer=recurrent_layer, use_ratings_features=args.rf,
                               use_movies_features=args.mf, use_users_features=args.uf, batch_size=args.batch_size)
         elif args.loss == 'CCE':
-            print("RNNOneHot is the method !")
             return RNNOneHot(interactions_are_unique=(not args.repeated_interactions), max_length=args.max_length,
                              diversity_bias=args.diversity_bias, regularization=args.regularization, updater=updater,
                              target_selection=target_selection, sequence_noise=sequence_noise,

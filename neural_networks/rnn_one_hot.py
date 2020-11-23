@@ -79,10 +79,8 @@ class RNNOneHot(rnn.RNNBase):
 
         if self.regularization > 0.:
             self.cost += self.regularization * lasagne.regularization.l2(self.l_out.b)
-        # self.cost += self.regularization * lasagne.regularization.regularize_layer_params(self.l_out, lasagne.regularization.l2)
         elif self.regularization < 0.:
             self.cost -= self.regularization * lasagne.regularization.l1(self.l_out.b)
-        # self.cost -= self.regularization * lasagne.regularization.regularize_layer_params(self.l_out, lasagne.regularization.l1)
 
     def _prepare_input(self, sequences):
         """

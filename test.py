@@ -88,21 +88,21 @@ def print_results(ev, metrics, plot=True, file=None, n_batches=None, print_full_
         if not os.path.exists(os.path.dirname(file)):
             os.makedirs(os.path.dirname(file))
         with open(file, "a") as f:
-            f.write(str(n_batches) + "\t".join(map(str, [ev.metrics[m]() for m in metrics])) + "\n")
+            f.write(str(n_batches) + " \t " + " \t ".join(map(str, [ev.metrics[m]() for m in metrics])) + "\n")
         if print_full_rank_comparison:
             with open(file + "_full_rank", "a") as f:
                 for data in ev.get_rank_comparison():
-                    f.write("\t".join(map(str, data)) + "\n")
+                    f.write(" \t ".join(map(str, data)) + "\n")
     else:
-        print("-\t" + "\t".join(map(str, [ev.metrics[m]() for m in metrics])), file=sys.stderr)
+        print("-\t " + " \t ".join(map(str, [ev.metrics[m]() for m in metrics])), file=sys.stderr)
         if print_full_rank_comparison:
             with open(file + "_full_rank", "a") as f:
                 for data in ev.get_rank_comparison():
-                    f.write("\t".join(map(str, data)) + "\n")
+                    f.write(" \t ".join(map(str, data)) + "\n")
 
 
 def extract_number_of_epochs(filename):
-    m = re.search('_ne([0-9]+\.[0-9]+?)_', filename)
+    m = re.search('_ne([0-9]+(\.[0-9]+)?)_', filename)
     return float(m.group(1))
 
 
@@ -137,10 +137,12 @@ def test_command_parser(parser):
 
 
 def main():
-    sys.argv.extend(['-d', 'datasets/', '--dir', 'RNNOneHot',
+    sys.argv.extend(['-d', 'datasets/', '--dir', 'RNNOneHot_',
                      '--metrics', 'recall,sps,ndcg,item_coverage,user_coverage,blockbuster_share',
-                     '-k', '3', '--save',
-                     '-m', 'RNN', '--r_t', 'LSTM', '--r_emb', '100'])
+                     '-k', '3', '--save', '--rf', '--mf',
+                     '-m', 'RNN', '--r_t', 'LSTM', '--r_emb', '100', '--r_l', '100-50-50', '--r_emb', '100',
+                     '--rf'])  # , '--mf'
+
     args = parse.command_parser(parse.predictor_command_parser, test_command_parser)
 
     args.training_max_length = args.max_length

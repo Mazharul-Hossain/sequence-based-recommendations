@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import lasagne
+
 from neural_networks.sparse_lstm import *
 
 
@@ -16,13 +17,16 @@ def recurrent_layers_command_parser(parser):
 
 
 def get_recurrent_layers(args):
-    return RecurrentLayers(layer_type=args.recurrent_layer_type, layers=map(int, args.r_l.split('-')),
+    return RecurrentLayers(layer_type=args.recurrent_layer_type, layers=list(map(int, args.r_l.split('-'))),
                            bidirectional=args.r_bi, embedding_size=args.r_emb)
 
 
 class RecurrentLayers(object):
-    def __init__(self, layer_type="LSTM", layers=[32], bidirectional=False, embedding_size=0, grad_clipping=100):
+    def __init__(self, layer_type="LSTM", layers=None, bidirectional=False, embedding_size=0, grad_clipping=100):
         super(RecurrentLayers, self).__init__()
+        self.name = ""
+        if layers is None:
+            layers = [32]
         self.layer_type = layer_type
         self.layers = layers
         self.bidirectional = bidirectional
@@ -32,7 +36,6 @@ class RecurrentLayers(object):
 
     def set_name(self):
 
-        self.name = ""
         if self.bidirectional:
             self.name += "b" + self.layer_type + "_"
         elif self.layer_type != "LSTM":

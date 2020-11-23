@@ -41,10 +41,11 @@ def main():
     sys.argv.extend(['--tshuffle', '--extended_set', '--load_last_model',
                      '-d', 'datasets/', '--dir', 'RNNOneHot_',
                      '--metrics', 'recall,sps,ndcg,item_coverage,user_coverage,blockbuster_share',
-                     '--max_iter', '6000.0', '--max_time', '28800.0', '--min_iter', '2',
+                     '--max_iter', '6000.0', '--max_time', '28800.0', '--min_iter', '100',
                      '--mpi', '100',
-                     '--es_m', 'StopAfterN', '--es_n', '5',
-                     '-m', 'RNN', '--loss', 'CCE', '--r_t', 'LSTM', '--r_emb', '100'])
+                     '--es_m', 'StopAfterN', '--es_n', '10',
+                     '-m', 'RNN', '--loss', 'CCE', '--r_t', 'LSTM', '--r_l', '100-50-50', '--r_emb', '100',
+                     '--rf'])  # , '--mf'
 
     args = parse.command_parser(parse.predictor_command_parser, training_command_parser,
                                 early_stopping.early_stopping_command_parser)

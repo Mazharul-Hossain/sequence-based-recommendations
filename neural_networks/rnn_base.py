@@ -117,7 +117,6 @@ class RNNBase(object):
     def _common_filename(self, epochs):
         """Common parts of the filename across sub classes.
         """
-        print('epochs:', epochs)
         filename = "ml" + str(self.max_length) + "_bs" + str(self.batch_size) + "_ne" + str(
             epochs) + "_" + self.recurrent_layer.name + "_" + self.updater.name + "_" + self.target_selection.name
 
@@ -531,7 +530,7 @@ class RNNBase(object):
             return 0
 
         # Find last model and load it
-        last_batch = np.amax(np.array(map(extract_number_of_epochs, file)))
+        last_batch = np.amax(np.array(list(map(extract_number_of_epochs, file))))
         last_model = save_dir + self._get_model_filename(last_batch)
         print('Starting from model ' + last_model)
         self.load(last_model)
@@ -539,16 +538,16 @@ class RNNBase(object):
         return last_batch
 
     def load(self, filename):
-        '''Load parameters values form a file
-        '''
+        """Load parameters values form a file
+        """
         f = open(filename, 'rb')
         param = pickle.load(f)
         f.close()
         lasagne.layers.set_all_param_values(self.l_out, [i.astype(theano.config.floatX) for i in param])
 
     def _n_items_features(self):
-        '''Number of movies features
-        '''
+        """Number of movies features
+        """
         if not hasattr(self, '__n_items_features'):
             f = self._get_movies_features((0, 1))  # get features for movie 0, rating 1
             self.__n_items_features = len(f)
@@ -571,14 +570,14 @@ class RNNBase(object):
         return self.__n_users_features
 
     def _n_optional_features(self):
-        ''' Number of optional features
-        '''
+        """ Number of optional features
+        """
         return self._n_ratings_features() + self._n_users_features() + self._n_items_features()
 
     def _get_movies_features(self, item):
-        '''Get the "movies features" of an item, i.e. [year, genre]
+        """Get the "movies features" of an item, i.e. [year, genre]
         The year is a one-hot-encoding with 8 neurons: before the 50s, the 50s, the 60s, ..., the 2000s, and the 2010s
-        '''
+        """
 
         def int2list(val, length):
             f = np.zeros(length)
@@ -603,9 +602,13 @@ class RNNBase(object):
             item_id, rating = item
             decade = year_to_decade(self.movies_features[item_id, 1])
             genre = self.movies_features[item_id, 2:]
-            avg_rating = int2list(round(self.other_features[item_id, 1] * 2), 10)
-            popularity = int2list(self.other_features[item_id, 3], 10)
-            return np.concatenate((decade, genre, avg_rating, popularity))
+
+            if self.other_features is not None:
+                avg_rating = int2list(round(self.other_features[item_id, 1] * 2), 10)
+                popularity = int2list(self.other_features[item_id, 3], 10)
+                return np.concatenate((decade, genre, avg_rating, popularity))
+            else:
+                return np.concatenate((decade, genre))
 
     def _get_ratings_features(self, item):
         """Get the "other features" of an item, i.e. [personal_rating on a scale of ten, average_rating on a scale of
