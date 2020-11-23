@@ -4,7 +4,7 @@ import numpy as np
 import theano
 import theano.tensor as T
 import lasagne
-import cPickle
+import pickle
 import random
 import re
 import glob

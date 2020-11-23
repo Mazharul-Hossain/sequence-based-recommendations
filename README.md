@@ -37,6 +37,22 @@ sudo apt-get install python-numpy python-scipy python-dev python-pip python-nose
 sudo pip install Theano pandas gensim https://github.com/Lasagne/Lasagne/archive/master.zip
 ````
 
+On Windows with conda:
+````
+conda create -n theano python=3
+conda activate theano
+
+conda install libpython
+conda install m2w64-toolchain
+pip install numpy==1.19.3
+
+pip install Theano pandas gensim https://github.com/Lasagne/Lasagne/archive/master.zip
+
+conda install pygpu
+pip install pymc3
+conda install mkl mkl-service blas
+````
+
 ## Usage
 The library is designed to be used in command line through three scripts:
 * preprocess.py for the preparation of the dataset
@@ -63,6 +79,16 @@ Option | Desciption
 `--val_size` | Number of users to put in the validation set. If in (0,1) it will be interpreted as the fraction of total number of users. Default: 0.1
 `--test_size` | Number of users to put in the test set. If in (0,1) it will be interpreted as the fraction of total number of users. Default: 0.1
 `--seed` | Seed for the random train/val/test split
+
+#### For the Project
+In the movielens 100k dataset each line has the following format:
+````
+UserID, MovieID, Rating, Timestamp
+````
+To process it you have to specify the order of the columns, in this case uirt (for user, item, rating, timestamp), and the separator (","). 10%  users for the validation set and another 10% for the test set. All settings are already set in code. So, just run the following command:
+````
+python preprocess.py 
+````
 
 #### Example 1
 In the movielens 1M dataset each line has the following format:
