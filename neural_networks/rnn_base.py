@@ -560,16 +560,16 @@ class RNNBase(object):
         return self.__n_items_features
 
     def _n_ratings_features(self):
-        '''Number of features linked to rating
-        '''
+        """Number of features linked to rating
+        """
         if not hasattr(self, '__n_other_features'):
             f = self._get_ratings_features((0, 1))  # get features for movie 0, rating 1
             self.__n_ratings_features = len(f)
         return self.__n_ratings_features
 
     def _n_users_features(self):
-        '''Number of users features
-        '''
+        """Number of users features
+        """
         if not hasattr(self, '__n_users_features'):
             f = self._get_user_features(0)  # get features for user 0
             self.__n_users_features = len(f)

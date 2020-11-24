@@ -61,6 +61,35 @@ The library is designed to be used in command line through three scripts:
 
 calling these scripts with the `--help` option will display the available options (e.g. `python preprocess.py --help`). 
 
+#### For the Project
+In the movielens 100k dataset,  
+ratings.csv each line has the following format:
+````
+UserID, MovieID, Rating, Timestamp
+````
+
+movies.csv each line has the following format:
+````
+movieId, title, genres
+````
+    
+    
+All settings are already set in code. So, just run the following command:
+````
+python preprocess.py 
+````
+
+Settings used are: Model: RNNOneHot LSTM, Loss: categorical cross-entropy, with movies feature. So, just run the following command:
+````
+python train.py 
+````
+
+Same settings are used. So, just run the following command:
+````
+python test.py 
+````
+
+
 ### preprocess.py
 
 This script takes a file containing a dataset of user/item interactions and split it into training/validation/test sets and save them in the format used by train.py and test.py.
@@ -80,15 +109,6 @@ Option | Desciption
 `--test_size` | Number of users to put in the test set. If in (0,1) it will be interpreted as the fraction of total number of users. Default: 0.1
 `--seed` | Seed for the random train/val/test split
 
-#### For the Project
-In the movielens 100k dataset each line has the following format:
-````
-UserID, MovieID, Rating, Timestamp
-````
-To process it you have to specify the order of the columns, in this case uirt (for user, item, rating, timestamp), and the separator (","). 10%  users for the validation set and another 10% for the test set. All settings are already set in code. So, just run the following command:
-````
-python preprocess.py 
-````
 
 #### Example 1
 In the movielens 1M dataset each line has the following format:

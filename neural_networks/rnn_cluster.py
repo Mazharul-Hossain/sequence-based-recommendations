@@ -8,8 +8,7 @@ from bisect import bisect
 from time import time
 
 import lasagne
-import theano
-import theano.tensor as T
+import numpy as np
 from theano.sandbox.rng_mrg import MRG_RandomStreams
 
 import neural_networks.rnn_base as rnn
@@ -390,7 +389,7 @@ class RNNCluster(rnn.RNNBase):
 
         for i, sequence in enumerate(sequences):
             user_id, in_seq, target = sequence
-            seq_features = np.array(map(lambda x: self._get_features(x, user_id), in_seq))
+            seq_features = np.array(list(map(lambda x: self._get_features(x, user_id), in_seq)))
             X[i, :len(in_seq), :] = seq_features  # Copy sequences into X
             mask[i, :len(in_seq)] = 1
             Y[i] = target[0][0]  # id of the first and only target
@@ -428,12 +427,15 @@ class RNNCluster(rnn.RNNBase):
         used_items = []
         ev = evaluation.Evaluator(self.dataset, k=10)
         ev_clusters = evaluation.Evaluator(self.dataset, k=10)
-        for batch, goal in self._gen_mini_batch(self.dataset.validation_set(epochs=1), test=True):
-            pred1, pred2, cl, i = self.test_function(batch)
-            ev.add_instance(goal, pred1)
-            ev_clusters.add_instance(goal, pred2)
-            clusters[cl] += 1
-            used_items.append(i)
+        try:
+            for batch, goal in self._gen_mini_batch(self.dataset.validation_set(epochs=1), test=True):
+                pred1, pred2, cl, i = self.test_function(batch)
+                ev.add_instance(goal, pred1)
+                ev_clusters.add_instance(goal, pred2)
+                clusters[cl] += 1
+                used_items.append(i)
+        except Exception as e:
+            print(e)
 
         if self.cluster_type == 'softmax':
             ignored_items = 0
@@ -521,7 +523,7 @@ class RNNCluster(rnn.RNNBase):
         # Prepare RNN input
         max_length_seq = sequence[-min(self.max_length, len(sequence)):]
         X = np.zeros((1, self.max_length, self._input_size()), dtype=self._input_type)  # input of the RNN
-        X[0, :len(max_length_seq), :] = np.array(map(lambda x: self._get_features(x, user_id), max_length_seq))
+        X[0, :len(max_length_seq), :] = np.array(list(map(lambda x: self._get_features(x, user_id), max_length_seq)))
         mask = np.zeros((1, self.max_length))  # mask of the input (to deal with sequences of different length)
         mask[0, :len(max_length_seq)] = 1
 

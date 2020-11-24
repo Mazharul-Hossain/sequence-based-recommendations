@@ -137,11 +137,36 @@ def test_command_parser(parser):
 
 
 def main():
-    sys.argv.extend(['-d', 'datasets/', '--dir', 'RNNOneHot_',
-                     '--metrics', 'recall,sps,ndcg,item_coverage,user_coverage,blockbuster_share',
+    sys.argv.extend(['-d', 'datasets/',
                      '-k', '3', '--save',
-                     '-m', 'RNN', '--loss', 'CCE', '--r_t', 'LSTM', '--r_l', '100-50-50',  # '--r_emb', '100',
-                     '--rf', '--mf'])
+                     '-m', 'RNN', '--r_t', 'LSTM', '--r_l', '100-50-50',
+                     '--rf'])
+    # ####################################################
+    # # for RNNCluster
+    # sys.argv.extend(['--dir', 'RNNCluster_',
+    #                  '--metrics', 'recall,sps,assr',
+    #                  '--loss', 'BPR', '--clusters', '10'])
+    # ####################################################
+    # for RNNOneHot
+    sys.argv.extend(['--dir', 'RNNOneHot_',
+                     '--metrics', 'recall,sps,ndcg,item_coverage,user_coverage,blockbuster_share',
+                     '--loss', 'CCE'])
+    # ####################################################
+    # # for RNNMargin
+    # sys.argv.extend(['--dir', 'RNNMargin_',
+    #                  '--metrics', 'recall,sps',
+    #                  '--loss', 'logit'])
+    # ####################################################
+    # # for RNNSampling
+    # sys.argv.extend(['--dir', 'RNNSampling_',
+    #                  '--metrics', 'recall,sps',
+    #                  '--loss', 'BPR'])
+    # ####################################################
+    # # without MOVIES_FEATURES
+    # sys.argv.extend(['--r_emb', '100'])
+    # with MOVIES_FEATURES
+    sys.argv.extend(['--mf'])
+    # ####################################################
 
     args = parse.command_parser(parse.predictor_command_parser, test_command_parser)
 

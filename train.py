@@ -39,14 +39,39 @@ def num(s):
 
 def main():
     sys.argv.extend(['--tshuffle', '--extended_set', '--load_last_model',
-                     '-d', 'datasets/', '--dir', 'RNNOneHot_',
+                     '-d', 'datasets/',
                      '--save', 'Best',
                      '--progress', '5.0', '--mpi', '1000.0',
-                     '--metrics', 'recall,sps,ndcg,item_coverage,user_coverage,blockbuster_share',
                      '--max_iter', '6000.0', '--max_time', '28800.0', '--min_iter', '100.0',
                      '--es_m', 'StopAfterN', '--es_n', '5',
-                     '-m', 'RNN', '--loss', 'CCE', '--r_t', 'LSTM', '--r_l', '100-50-50',  # '--r_emb', '100',
-                     '--rf', '--mf'])
+                     '-m', 'RNN', '--r_t', 'LSTM', '--r_l', '100-50-50',
+                     '--rf'])
+    # ####################################################
+    # # for RNNCluster
+    # sys.argv.extend(['--dir', 'RNNCluster_',
+    #                  '--metrics', 'recall,cluster_recall,sps,cluster_sps,ignored_items,assr',
+    #                  '--loss', 'BPR', '--clusters', '10'])
+    # ####################################################
+    # for RNNOneHot
+    sys.argv.extend(['--dir', 'RNNOneHot_',
+                     '--metrics', 'recall,sps,ndcg,item_coverage,user_coverage,blockbuster_share',
+                     '--loss', 'CCE'])
+    # ####################################################
+    # # for RNNMargin
+    # sys.argv.extend(['--dir', 'RNNMargin_',
+    #                  '--metrics', 'recall,sps',
+    #                  '--loss', 'logit'])
+    # ####################################################
+    # # for RNNSampling
+    # sys.argv.extend(['--dir', 'RNNSampling_',
+    #                  '--metrics', 'recall,sps',
+    #                  '--loss', 'BPR'])
+    # ####################################################
+    # # without MOVIES_FEATURES
+    # sys.argv.extend(['--r_emb', '100'])
+    # # with MOVIES_FEATURES
+    sys.argv.extend(['--mf'])
+    # ####################################################
 
     args = parse.command_parser(parse.predictor_command_parser, training_command_parser,
                                 early_stopping.early_stopping_command_parser)

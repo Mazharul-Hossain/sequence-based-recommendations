@@ -1,10 +1,9 @@
 from __future__ import print_function
 
 import lasagne
-import neural_networks.rnn_base as rnn
-import theano
-import theano.tensor as T
+import numpy as np
 
+import neural_networks.rnn_base as rnn
 from neural_networks.sparse_lstm import *
 
 
@@ -124,7 +123,7 @@ class RNNMargin(rnn.RNNBase):
 
         for i, sequence in enumerate(sequences):
             user_id, in_seq, target = sequence
-            seq_features = np.array(map(lambda x: self._get_features(x, user_id), in_seq))
+            seq_features = np.array(list(map(lambda x: self._get_features(x, user_id), in_seq)))
             X[i, :len(in_seq), :] = seq_features  # Copy sequences into X
             mask[i, :len(in_seq)] = 1
             exclude[i, [j[0] for j in in_seq]] = 1
