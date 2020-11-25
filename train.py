@@ -38,13 +38,14 @@ def num(s):
 
 
 def main():
-    sys.argv.extend(['--tshuffle', '--extended_set', '--load_last_model',
+    sys.argv.extend(['--tshuffle', '--load_last_model',  # '--extended_set',
                      '-d', 'datasets/',
                      '--save', 'Best',
-                     '--progress', '5.0', '--mpi', '1000.0',
+                     '--progress', '200', '--mpi', '1000.0',
                      '--max_iter', '6000.0', '--max_time', '28800.0', '--min_iter', '100.0',
-                     '--es_m', 'StopAfterN', '--es_n', '5',
-                     '-m', 'RNN', '--r_t', 'LSTM', '--r_l', '100-50-50',
+                     '--es_m', 'StopAfterN', '--es_n', '3',
+                     '-m', 'RNN', '--r_t', 'GRU', '--r_l', '100-50',
+                     '--u_m', 'rmsprop',
                      '--rf'])
     # ####################################################
     # # for RNNCluster
@@ -54,7 +55,7 @@ def main():
     # ####################################################
     # for RNNOneHot
     sys.argv.extend(['--dir', 'RNNOneHot_',
-                     '--metrics', 'recall,sps,ndcg,item_coverage,user_coverage,blockbuster_share',
+                     '--metrics', 'recall,sps',  # ,ndcg,item_coverage,user_coverage,blockbuster_share
                      '--loss', 'CCE'])
     # ####################################################
     # # for RNNMargin

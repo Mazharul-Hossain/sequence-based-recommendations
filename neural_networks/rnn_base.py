@@ -610,6 +610,7 @@ class RNNBase(object):
             genre = self.movies_features[item_id, 2:]
 
             if self.other_features is not None:
+                print("self.other_features is not None")
                 avg_rating = int2list(round(self.other_features[item_id, 1] * 2), 10)
                 popularity = int2list(self.other_features[item_id, 3], 10)
                 return np.concatenate((decade, genre, avg_rating, popularity))

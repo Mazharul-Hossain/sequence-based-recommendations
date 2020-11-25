@@ -75,8 +75,8 @@ class DataHandler(object):
         return self.training_set._item_pop
 
     def _get_path(self, dirname):
-        ''' Choose between dirname and DEFAULT_DIR+dirname.
-        '''
+        """ Choose between dirname and DEFAULT_DIR+dirname.
+        """
         if os.path.exists(dirname) and not os.path.exists(DEFAULT_DIR + dirname + '/'):
             return dirname
         if not os.path.exists(dirname) and os.path.exists(DEFAULT_DIR + dirname + '/'):
@@ -89,8 +89,8 @@ class DataHandler(object):
         raise ValueError('Dataset not found')
 
     def _load_stats(self):
-        ''' Load informations about the dataset from dirname/data/stats
-        '''
+        """ Load information about the dataset from dirname/data/stats
+        """
         with open(self.dirname + 'data/stats', 'r') as f:
             _ = f.readline()  # Line with column titles
             self.n_users, self.n_items, self.n_interactions, self.longest_sequence = map(int, f.readline().split()[1:])
@@ -160,9 +160,9 @@ class SequenceGenerator(object):
 
                 if len(sequence) < min_length:
                     continue
-                if (length_choice == 'random'):
+                if length_choice == 'random':
                     length = np.random.randint(min_length, min(this_max_length, len(sequence)) + 1)
-                elif (length_choice == 'max'):
+                elif length_choice == 'max':
                     length = min(this_max_length, len(sequence))
                 else:
                     raise ValueError('Unrecognised length_choice option. Authorised values are "random" and "max" ')
@@ -178,6 +178,7 @@ class SequenceGenerator(object):
                         sequence = sequence[:length]
                     else:
                         raise ValueError(
-                            'Unrecognised subsequence option. Authorised values are "random", "contiguous" and "begining".')
+                            'Unrecognised subsequence option. Authorised values are "random", "contiguous" and '
+                            '"beginning".')
 
                 yield sequence, user_id

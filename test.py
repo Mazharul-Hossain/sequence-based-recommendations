@@ -139,7 +139,8 @@ def test_command_parser(parser):
 def main():
     sys.argv.extend(['-d', 'datasets/',
                      '-k', '3', '--save',
-                     '-m', 'RNN', '--r_t', 'LSTM', '--r_l', '100-50-50',
+                     '-m', 'RNN', '--r_t', 'GRU', '--r_l', '100-50',
+                     '--u_m', 'rmsprop',
                      '--rf'])
     # ####################################################
     # # for RNNCluster
@@ -149,7 +150,7 @@ def main():
     # ####################################################
     # for RNNOneHot
     sys.argv.extend(['--dir', 'RNNOneHot_',
-                     '--metrics', 'recall,sps,ndcg,item_coverage,user_coverage,blockbuster_share',
+                     '--metrics', 'sps,item_coverage,user_coverage,recall',
                      '--loss', 'CCE'])
     # ####################################################
     # # for RNNMargin

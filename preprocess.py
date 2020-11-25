@@ -39,6 +39,9 @@ def command_parser():
                         default=0.1, type=float)
     parser.add_argument('--seed', help='Seed for the random train/val/test split', default=1, type=int)
     parser.add_argument('--mf', help='Use movie features input file.', default="", type=str)
+    parser.add_argument('--c_i',
+                        help='Use custom testing set (contains users rated after 2017-01-01 place in test set).',
+                        action='store_true')
 
     args = parser.parse_args()
     args.dirname = os.path.dirname(os.path.abspath(args.filename)) + "/"
@@ -152,7 +155,7 @@ def save_index_mapping(data, dirname, separator="\t"):
     return data
 
 
-def split_data(data, nb_val_users, nb_test_users, dirname):
+def split_data(data, nb_val_users, nb_test_users, dirname, custom=False):
     """
     Splits the data set into training, validation and test sets.
     Each user is in one and only one set.
@@ -172,20 +175,25 @@ def split_data(data, nb_val_users, nb_test_users, dirname):
     if nb_users <= nb_val_users + nb_test_users:
         raise ValueError('Not enough users in the dataset: choose less users for validation and test splits')
 
-    def extract_n_users(df, n, test=False):
-        if test:
-            temp_df = df.loc[df.t > '2017-01-01']
-            users_ids = np.random.choice(temp_df['u'].unique(), n)
+    def extract_n_users(df, n, test=False, i_custom=False):
+        if test and i_custom:
+            temp_df = df.loc[df.t > '2018-01-01']
+            print("custom test dataset: ", len(temp_df['u'].unique()), n)
+            if len(temp_df['u'].unique()) > n:
+                users_ids = np.random.choice(temp_df['u'].unique(), n)
+            else:
+                users_ids = np.array(temp_df['u'].unique())
         else:
             users_ids = np.random.choice(df['u'].unique(), n)
 
         n_set = df[df['u'].isin(users_ids)]
+        print("test dataset: ", n_set.shape)
         remain_set = df.drop(n_set.index)
         return n_set, remain_set
 
     print('Split data into training, validation and test sets...')
-    test_set, tmp_set = extract_n_users(data, nb_test_users, test=True)
-    val_set, train_set = extract_n_users(tmp_set, nb_val_users)
+    test_set, tmp_set = extract_n_users(data, nb_test_users, test=True, i_custom=custom)
+    val_set, train_set = extract_n_users(tmp_set, nb_val_users, i_custom=custom)
 
     print('Save training, validation and test sets in the triplets format...')
     train_set.to_csv(dirname + "data/train_set_triplets", sep="\t", columns=['u', 'i', 'r'], index=False, header=False)
@@ -376,7 +384,7 @@ def process_movies_features(filename, dirname):
 
 def main():
     sys.argv.extend(['-f', 'datasets/ratings.csv', '--columns', 'uirt', '--sep', ',',
-                     '--mf', 'datasets/movies.csv'])
+                     '--mf', 'datasets/movies.csv', '--c_i'])
     args = command_parser()
     print(args)
 
@@ -393,7 +401,7 @@ def main():
 
     data = save_index_mapping(data, args.dirname)
 
-    train_set, val_set, test_set = split_data(data, args.val_size, args.test_size, args.dirname)
+    train_set, val_set, test_set = split_data(data, args.val_size, args.test_size, args.dirname, custom=args.c_i)
     make_sequence_format(train_set, val_set, test_set, args.dirname)
 
     if args.mf is not None and args.mf != "":

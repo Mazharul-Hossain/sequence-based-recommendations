@@ -6,7 +6,7 @@ def update_manager_command_parser(parser):
                         help='Update mechanism', default='adam')
     parser.add_argument('--u_l', help='Learning rate', default=0.001, type=float)
     parser.add_argument('--u_rho', help='rho parameter for Adadelta and RMSProp (momentum for Nesterov momentum)',
-                        default=0.9, type=float)
+                        default=0.99, type=float)
     parser.add_argument('--u_b1', help='Beta 1 parameter for Adam', default=0.9, type=float)
     parser.add_argument('--u_b2', help='Beta 2 parameter for Adam', default=0.999, type=float)
 
