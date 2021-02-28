@@ -1,4 +1,6 @@
 # Collaborative filtering based on sequences
+COMP 8150: Fundamentals of Data Science term final project
+
 This python library includes multiple collaboraborative filtering algorithm that make use of the sequence of actions of the user: they not only use the fact that a user rated a certain item, but also that he rated before this other item or after that other one.
 Some standard algorithms that do not use sequence information are also present for easier comparison.
 
