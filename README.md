@@ -1,3 +1,5 @@
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 # Collaborative filtering based on sequences
 COMP 8150: Fundamentals of Data Science term final project
 
